@@ -44,9 +44,16 @@ def load_infos_gen(data):
 @st.cache
 def chargement_ligne_data(id, df):
     return df[df.index==int(id)].drop(['Unnamed: 0'], axis=1)
+
+def load_model():
+    pickle_in = open('data/LR_pkl','rb')
+    model = pickle.load(pickle_in)
+    return model
+
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
 id_client = data_test.index.values
+clf = load_model()
 
 #Loading selectbox ==> choisir l'identifiant
 chk_id = st.sidebar.selectbox("Identifiant du client", id_client)
@@ -88,6 +95,12 @@ if st.checkbox("Prédiction"):
         st.write('Crédit refusé')
     else:
         st.write('Crédit accordé')
-
+#Interpretation - Lime
+explainer = pickle.load(open('data/Lime_LR_pkl', 'rb'))
+if st.checkbox("Identifiant du client  {:.0f} -  feature importance ?".format(chk_id)):
+    x_test=X_test.loc[chk_id]
+    explainer_client=explainer.explain_instance(np.array(x_test), clf.predict_proba, num_features=len(X_test.columns))
+    fig = explainer_client.as_pyplot_figure()
+    st.pyplot(fig)
 else:
     st.markdown("<i>…</i>", unsafe_allow_html=True)
