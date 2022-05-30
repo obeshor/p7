@@ -12,7 +12,14 @@ clf = pickle.load(pickle_in)
 def index():
     return("lancement application - Scoring")
 
+@app.post('/credit/<id_client>')
+def credit(id_client):
+    pred=clf.predict(X_test[X_test.index == id_client])
+    dict_final = {
 
+       'pred': str(pred),
+    }
+    return(dict_final)
 #lancement de l'application
 if __name__ == "__main__":
     app.run(debug=True)
