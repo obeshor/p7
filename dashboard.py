@@ -64,6 +64,10 @@ def load_kmeans(df, id, mdl):
     df_neighbors = pd.concat([df_neighbors, data_test.drop(['Unnamed: 0'],axis=1)], axis=1)
     return df_neighbors.iloc[:,1:].sample(5)
 
+def identite_client(data, id):
+    data_client = data[data.index == int(id)]
+    return data_client
+
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
 id_client = data_test.index.values
@@ -133,4 +137,13 @@ if chk_voisins:
     st.markdown("<i>Target 1 = Client avec difficultés de paiment</i>", unsafe_allow_html=True)
 else:
     st.markdown("<i>…</i>", unsafe_allow_html=True)
+#quelques informations générales
+st.header("**Informations du client**")
 
+if st.checkbox("Détails"):
+    infos_client = identite_client(data_test, chk_id) #Identité
+    st.write(infos_client)
+    st.write("**Genre :**",infos_client["CODE_GENDER"].values[0]) #Genre
+    st.write("**Age:** {:.0f} ans".format(abs(int(infos_client["DAYS_BIRTH"] / 365))))
+    st.write("**Situation familliale :**", infos_client["NAME_FAMILY_STATUS"].values[0])
+    st.write("**Nombre d'enfants:** {:.0f}".format(infos_client["CNT_CHILDREN"].values[0]))
