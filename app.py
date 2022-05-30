@@ -8,3 +8,11 @@ X_test = pd.read_csv('data/X_test.csv',index_col='SK_ID_CURR', encoding='utf-8')
 pickle_in = open('data/LR_pkl', 'rb') # importation du modèle
 clf = pickle.load(pickle_in)
 
+@app.get('/')
+def index():
+    return("lancement")
+
+
+#lancement de l'application
+if __name__ == "__main__":
+    app.run(debug=True)
