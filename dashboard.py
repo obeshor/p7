@@ -83,6 +83,11 @@ st.sidebar.pyplot(fig)
 st.write("Identifiant du client :", chk_id)
 df_client = chargement_ligne_data(chk_id, data_test)
 st.write(df_client)
+# description variables
+if st.checkbox("Besoin d'aide - description des variables ?"):
+    features = description.index.to_list()
+    feature = st.selectbox('Feature checklist…', features)
+    st.table(description.loc[description.index == feature][:1])
 
 #Prédiction
 st.header("**Décision - crédit**")
@@ -102,5 +107,6 @@ if st.checkbox("Identifiant du client  {:.0f} -  feature importance ?".format(ch
     explainer_client=explainer.explain_instance(np.array(x_test), clf.predict_proba, num_features=len(X_test.columns))
     fig = explainer_client.as_pyplot_figure()
     st.pyplot(fig)
+
 else:
     st.markdown("<i>…</i>", unsafe_allow_html=True)
