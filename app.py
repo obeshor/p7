@@ -10,7 +10,7 @@ clf = pickle.load(pickle_in)
 
 @app.get('/')
 def index():
-    return("lancement")
+    return("lancement application - Scoring")
 
 
 #lancement de l'application
