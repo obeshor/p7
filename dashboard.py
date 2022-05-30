@@ -59,6 +59,11 @@ st.sidebar.text(rev_moy)
 # AMT CREDIT
 st.sidebar.markdown("<u>**Montant de crédit moyen (USD) :**</u>", unsafe_allow_html=True)
 st.sidebar.text(credits_moy)
+# PieChart
+st.sidebar.markdown("<u>**Répartition des clients:**</u>", unsafe_allow_html=True)
+fig, ax = plt.subplots(figsize=(5, 5))
+plt.pie(targets, explode=[0, 0.1], labels=['Sans difficultés de paiement', 'Difficultés de paiement'] ,colors=['red','green'],autopct='%1.1f%%', startangle=90)
+st.sidebar.pyplot(fig)
 
 st.header("**Décision - crédit**")
 if st.checkbox("Prédiction"):
