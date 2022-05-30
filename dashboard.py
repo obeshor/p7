@@ -67,6 +67,16 @@ def load_kmeans(df, id, mdl):
 def identite_client(data, id):
     data_client = data[data.index == int(id)]
     return data_client
+@st.cache
+def load_age_population(data):
+    data_age = round((data["DAYS_BIRTH"] / 365), 2)
+    return data_age
+
+@st.cache
+def load_income_population(data):
+    df_income = pd.DataFrame(data["AMT_INCOME_TOTAL"])
+    df_income = df_income.loc[df_income['AMT_INCOME_TOTAL'] < 200000, :]
+    return df_income
 
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
@@ -147,3 +157,28 @@ if st.checkbox("Détails"):
     st.write("**Age:** {:.0f} ans".format(abs(int(infos_client["DAYS_BIRTH"] / 365))))
     st.write("**Situation familliale :**", infos_client["NAME_FAMILY_STATUS"].values[0])
     st.write("**Nombre d'enfants:** {:.0f}".format(infos_client["CNT_CHILDREN"].values[0]))
+
+# Age distribution plot
+    data_age = load_age_population(data_test)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.histplot(abs(data_age), edgecolor='k', color="red", bins=20)
+    ax.axvline(abs(int(infos_client["DAYS_BIRTH"].values / 365)), color="green", linestyle='--')
+    ax.set(title='Age des clients', xlabel='Age (Années)', ylabel='')
+    st.pyplot(fig)
+
+    st.subheader("*Revenus (USD)*")
+    st.write("**Revenus total du client :** {:.0f}".format(infos_client["AMT_INCOME_TOTAL"].values[0]))
+    st.write("**Montant du crédit du client :** {:.0f}".format(infos_client["AMT_CREDIT"].values[0]))
+    st.write("**Annuités:** {:.0f}".format(infos_client["AMT_ANNUITY"].values[0]))
+    st.write("**Montant des biens pour crédit de consommation:** {:.0f}".format(infos_client["AMT_GOODS_PRICE"].values[0]))
+
+    # Income distribution plot
+    data_income = load_income_population(data_test)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.histplot(data_income["AMT_INCOME_TOTAL"], edgecolor='k', color="red", bins=10)
+    ax.axvline(int(infos_client["AMT_INCOME_TOTAL"].values[0]), color="green", linestyle='--')
+    ax.set(title='Revenu du client', xlabel='Revenu (USD)', ylabel='')
+    st.pyplot(fig)
+
+else:
+    st.markdown("<i>…</i>", unsafe_allow_html=True)
