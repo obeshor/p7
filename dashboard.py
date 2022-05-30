@@ -40,6 +40,10 @@ def load_infos_gen(data):
 
     targets = data.TARGET.value_counts()
     return nb_credits, rev_moy, credits_moy, targets
+
+@st.cache
+def chargement_ligne_data(id, df):
+    return df[df.index==int(id)].drop(['Unnamed: 0'], axis=1)
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
 id_client = data_test.index.values
@@ -65,6 +69,15 @@ fig, ax = plt.subplots(figsize=(5, 5))
 plt.pie(targets, explode=[0, 0.1], labels=['Sans difficultés de paiement', 'Difficultés de paiement'] ,colors=['red','green'],autopct='%1.1f%%', startangle=90)
 st.sidebar.pyplot(fig)
 
+#######################################
+# Page d'accueil
+#######################################
+#Identifiant et données du client
+st.write("Identifiant du client :", chk_id)
+df_client = chargement_ligne_data(chk_id, data_test)
+st.write(df_client)
+
+#Prédiction
 st.header("**Décision - crédit**")
 if st.checkbox("Prédiction"):
     response=requests.post("http://127.0.0.1:5000/credit/" + str(chk_id))
