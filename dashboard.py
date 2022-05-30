@@ -49,6 +49,20 @@ def load_model():
     pickle_in = open('data/LR_pkl','rb')
     model = pickle.load(pickle_in)
     return model
+@st.cache(allow_output_mutation=True)
+def clusters():
+    pickle_in = open('data/clustering','rb')
+    model = pickle.load(pickle_in)
+    return (model)
+
+@st.cache
+def load_kmeans(df, id, mdl):
+    index = df[df.index == int(id)].index.values
+    index = index[0]
+    data_client = pd.DataFrame(df.loc[df.index, :])
+    df_neighbors = pd.DataFrame(mdl.fit_predict(data_client), index=data_client.index)
+    df_neighbors = pd.concat([df_neighbors, data_test.drop(['Unnamed: 0'],axis=1)], axis=1)
+    return df_neighbors.iloc[:,1:].sample(5)
 
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
@@ -110,3 +124,13 @@ if st.checkbox("Identifiant du client  {:.0f} -  feature importance ?".format(ch
 
 else:
     st.markdown("<i>…</i>", unsafe_allow_html=True)
+
+chk_voisins = st.checkbox("Clients avec un profil similaire  ?")
+if chk_voisins:
+    knn = clusters() #modele de clustering
+    st.markdown("<u>la liste de 5 clients similaires :</u>", unsafe_allow_html=True)
+    st.dataframe(load_kmeans(X_test, chk_id, knn))
+    st.markdown("<i>Target 1 = Client avec difficultés de paiment</i>", unsafe_allow_html=True)
+else:
+    st.markdown("<i>…</i>", unsafe_allow_html=True)
+
