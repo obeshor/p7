@@ -27,12 +27,38 @@ def load_data():
                               usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
     target = data_train.iloc[:, -1:]
     return data_test,data_train,X_test,target, description
+
+@st.cache
+def load_infos_gen(data):
+    lst_infos = [data.shape[0],
+                    round(data["AMT_INCOME_TOTAL"].mean(), 2),
+                    round(data["AMT_CREDIT"].mean(), 2)]
+
+    nb_credits = lst_infos[0] #Nombre de clients
+    rev_moy = lst_infos[1] #Revenus moyen
+    credits_moy = lst_infos[2] # montant moyen de crédit
+
+    targets = data.TARGET.value_counts()
+    return nb_credits, rev_moy, credits_moy, targets
 #### Chargement des donnés et du modèle de prédiction
 data_test,data_train ,X_test,target, description = load_data()
 id_client = data_test.index.values
 
 #Loading selectbox ==> choisir l'identifiant
 chk_id = st.sidebar.selectbox("Identifiant du client", id_client)
+#Loading general info ==> Calculs de quelques informations générales
+nb_credits, rev_moy, credits_moy, targets = load_infos_gen(data_train)
+
+st.sidebar.markdown("<u>**Nombre totale de client :**</u>", unsafe_allow_html=True)
+st.sidebar.text(nb_credits)
+
+# Average income
+st.sidebar.markdown("<u>**Revenu moyen (USD) :**</u>", unsafe_allow_html=True)
+st.sidebar.text(rev_moy)
+
+# AMT CREDIT
+st.sidebar.markdown("<u>**Montant de crédit moyen (USD) :**</u>", unsafe_allow_html=True)
+st.sidebar.text(credits_moy)
 
 st.header("**Décision - crédit**")
 if st.checkbox("Prédiction"):
