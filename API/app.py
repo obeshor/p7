@@ -1,5 +1,5 @@
 from flask import Flask
-
+import gunicorn
 import pandas as pd
 import pickle
 
@@ -20,6 +20,7 @@ def credit(id_client):
        'pred': str(pred),
     }
     return(dict_final)
+    #return(pred)
 #lancement de l'application
 if __name__ == "__main__":
     app.run(debug=True)

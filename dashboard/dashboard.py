@@ -122,6 +122,7 @@ st.header("**Décision - crédit**")
 if st.checkbox("Prédiction"):
     response=requests.post("http://127.0.0.1:5000/credit/" + str(chk_id))
     decision=response.text
+    #st.write(decision)
     #for i in decision:
      #   st.write(i)
     if '1' in decision:
